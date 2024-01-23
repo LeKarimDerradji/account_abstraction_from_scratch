@@ -4,14 +4,31 @@
 // You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
+const { EntryPoint__factory } = require("@account-abstraction/contracts");
 const hre = require("hardhat");
 
+const FACTORY_NONCE = 1;
+const FACTORY_ADDRESS = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
+const EP_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+
 async function main() {
-  const ep = await hre.ethers.deployContract("EntryPoint");
+  const entryPoint = await hre.ethers.deployContractAt(
+    "EntryPoint",
+    EP_ADDRESS
+  );
+
+  const sender = await hre.ethers.getCreateAddress({
+    from: FACTORY_ADDRESS,
+    nonce: FACTORY_NONCE,
+  });
+
+  const AccountFactory = await hre.ethers.getContractFactory("AccountFactory");
+  const initCode =
+    FACTORY_ADDRESS + AccountFactory.interface.encodeFunctionData;
 
   const userOp = {
     sender,
-    nonce,
+    nonce: entryPoint.getNonce(sender, 0),
     initCode,
     callData,
     callGasLimit: 200_000,
@@ -20,7 +37,7 @@ async function main() {
     maxFeePerGas: hre.ethers.parseUnits("10", "gwei"),
     maxPriorityFeePerGas: hre.ethers.parseUnits("5", "gwei"),
     paymasterAndData: "0x",
-    signature: "0x"
+    signature: "0x",
   };
 }
 
