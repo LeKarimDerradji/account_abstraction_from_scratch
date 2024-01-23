@@ -1,9 +1,3 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
 const { EntryPoint__factory } = require("@account-abstraction/contracts");
 const hre = require("hardhat");
 
@@ -12,46 +6,68 @@ const FACTORY_ADDRESS = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
 const EP_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
 
 async function main() {
-  const entryPoint = await hre.ethers.deployContractAt(
-    "EntryPoint",
-    EP_ADDRESS
-  );
+  try {
+    const entryPoint = await hre.ethers.getContractAt(
+      "EntryPoint",
+      EP_ADDRESS
+    );
+    const epDepAddress = await entryPoint.getAddress();
+    console.log("EntryPoint Contract:", epDepAddress);
 
-  const sender = await hre.ethers.getCreateAddress({
-    from: FACTORY_ADDRESS,
-    nonce: FACTORY_NONCE,
-  });
+    const sender = hre.ethers.getCreateAddress({
+        from: FACTORY_ADDRESS, 
+        nonce: FACTORY_NONCE, 
+    })
 
-  const [signer0] = await hre.ethers.getSigners();
-  const address0 = await signer0.getAddress;
-  const AccountFactory = await hre.ethers.getContractFactory("AccountFactory");
-  const initCode =
-    FACTORY_ADDRESS +
-    AccountFactory.interface.encodeFunctionData("createAccount", [address0]);
+    const AccountFactory = await hre.ethers.getContractFactory("AccountFactory");
+    const Account = await hre.ethers.getContractFactory("Account")
 
-  const Account = await hre.ethers.getContractFactory("Account");
+    const [signer0] = await hre.ethers.getSigners();
+    const address0 = await signer0.getAddress();
+    console.log(address0)
 
-  const userOp = {
-    sender,
-    nonce: entryPoint.getNonce(sender, 0),
-    initCode: initCode,
-    callData: Account.interface.encodeFunctionData("execute"), //CallData of the UserOp
-    callGasLimit: 200_000,
-    verificationGasLimit: 200_000,
-    preVerificationGas: 50_000,
-    maxFeePerGas: hre.ethers.parseUnits("10", "gwei"),
-    maxPriorityFeePerGas: hre.ethers.parseUnits("5", "gwei"),
-    paymasterAndData: "0x",
-    signature: "0x",
-  };
+   
+    // Ensure proper encoding of the function data
+    const createAccountFunctionData = AccountFactory.interface.encodeFunctionData("createAccount", [address0]).slice(2);
+    const executeFunctionData = Account.interface.encodeFunctionData("execute");
 
-  const tx = await entryPoint.handleOps([userOp, address0]);
-  const receit = await tx.wait();
-  console.log(receit);
+    const initCode = FACTORY_ADDRESS + createAccountFunctionData;
+
+    await entryPoint.depositTo(sender, {value: hre.ethers.parseUnits("100")});
+
+    console.log(createAccountFunctionData)
+
+    const userOp = {
+      sender,
+      nonce: await entryPoint.getNonce(FACTORY_ADDRESS, FACTORY_NONCE),
+      initCode,
+      callData: executeFunctionData, // No need for callData as we're using 'createAccount'
+      callGasLimit: 200_000,
+      verificationGasLimit: 200_000,
+      preVerificationGas: 50_000,
+      maxFeePerGas: hre.ethers.parseUnits("10", "gwei"),
+      maxPriorityFeePerGas: hre.ethers.parseUnits("5", "gwei"),
+      paymasterAndData: "0x",
+      signature: "0x",
+    };
+
+    console.log("UserOp:", userOp);
+
+    const tx = await entryPoint.handleOps([userOp], address0);
+    console.log("Transaction Hash:", tx.hash);
+
+    const receipt = await tx.wait();
+    console.log("Transaction Receipt:", receipt);
+  } catch (error) {
+    console.error("Error occurred:", error);
+    // Add more detailed error information if available
+    if (error.code === "UNSUPPORTED_OPERATION") {
+      console.error("Unsupported operation details:", error.info);
+    }
+    process.exitCode = 1;
+  }
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
