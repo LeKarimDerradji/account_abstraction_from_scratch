@@ -22,15 +22,20 @@ async function main() {
     nonce: FACTORY_NONCE,
   });
 
+  const [signer0] = await hre.ethers.getSigners();
+  const address0 = await signer0.getAddress;
   const AccountFactory = await hre.ethers.getContractFactory("AccountFactory");
   const initCode =
-    FACTORY_ADDRESS + AccountFactory.interface.encodeFunctionData;
+    FACTORY_ADDRESS +
+    AccountFactory.interface.encodeFunctionData("createAccount", [address0]);
+
+  const Account = await hre.ethers.getContractFactory("Account");
 
   const userOp = {
     sender,
     nonce: entryPoint.getNonce(sender, 0),
-    initCode,
-    callData,
+    initCode: initCode,
+    callData: Account.interface.encodeFunctionData("execute"), //CallData of the UserOp
     callGasLimit: 200_000,
     verificationGasLimit: 200_000,
     preVerificationGas: 50_000,
@@ -39,6 +44,10 @@ async function main() {
     paymasterAndData: "0x",
     signature: "0x",
   };
+
+  const tx = await entryPoint.handleOps([userOp, address0]);
+  const receit = await tx.wait();
+  console.log(receit);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
