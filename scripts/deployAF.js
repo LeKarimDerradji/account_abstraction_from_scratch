@@ -7,13 +7,11 @@
 const hre = require("hardhat");
 
 async function main() {
-  const EP_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-  const AF_ADDRESS = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
-  const EP_CODE = await hre.ethers.provider.getCode(EP_ADDRESS)
-  const AF_CODE = await hre.ethers.provider.getCode(AF_ADDRESS)
+  const af = await hre.ethers.deployContract("AccountFactory");
 
-  console.log(`EntryPoint code : ${EP_CODE}`);
-  console.log(`AccountFactory code : ${AF_CODE}`);
+  await af.waitForDeployment();
+
+  console.log(`AccountFactory deployed to ${af.target}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
