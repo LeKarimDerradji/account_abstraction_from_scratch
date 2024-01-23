@@ -31,16 +31,18 @@ async function main() {
     const createAccountFunctionData = AccountFactory.interface.encodeFunctionData("createAccount", [address0]).slice(2);
     const executeFunctionData = Account.interface.encodeFunctionData("execute");
 
-    const initCode = FACTORY_ADDRESS + createAccountFunctionData;
+    //const initCode = FACTORY_ADDRESS + createAccountFunctionData;
 
-    await entryPoint.depositTo(sender, {value: hre.ethers.parseUnits("100")});
+    console.log(sender);
+
+    // await entryPoint.depositTo(sender, {value: hre.ethers.parseUnits("100")});
 
     console.log(createAccountFunctionData)
 
     const userOp = {
       sender,
-      nonce: await entryPoint.getNonce(FACTORY_ADDRESS, FACTORY_NONCE),
-      initCode,
+      nonce: await entryPoint.getNonce(FACTORY_ADDRESS, 2),
+      initCode: "0x",
       callData: executeFunctionData, // No need for callData as we're using 'createAccount'
       callGasLimit: 200_000,
       verificationGasLimit: 200_000,
