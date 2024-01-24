@@ -35,7 +35,7 @@ async function main() {
 
     console.log(sender);
 
-    // await entryPoint.depositTo(sender, {value: hre.ethers.parseUnits("100")});
+    await entryPoint.depositTo(paymasterAddr, { value: hre.ethers.parseUnits("100")});
 
     console.log(createAccountFunctionData);
 
