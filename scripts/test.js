@@ -12,13 +12,16 @@ async function main() {
   const PM_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
   const EP_CODE = await hre.ethers.provider.getCode(EP_ADDRESS);
   const AF_CODE = await hre.ethers.provider.getCode(AF_ADDRESS);
+  const PM_CODE = await hre.ethers.provider.getCode(PM_ADDRESS);
   const Account = await hre.ethers.getContractAt("Account", ACCOUNT_ADDRESS);
-  const count = await Account.count();
+  //const count = await Account.count();
 
-  console.log("Count is at: ", count);
+  //console.log("Count is at: ", count);
 
-  console.log(`EntryPoint code : ${EP_CODE}`);
-  console.log(`AccountFactory code : ${AF_CODE}`);
+  //console.log(`EntryPoint code : ${EP_CODE}`);
+  //console.log(`AccountFactory code : ${AF_CODE}`);
+  console.log(`Paymaster code : ${PM_CODE}`);
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere
