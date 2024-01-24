@@ -1,4 +1,6 @@
+// SPDX-License-Identifier: UNLICENSED
 import "@account-abstraction/contracts/interfaces/IPaymaster.sol";
+pragma solidity ^0.8.9;
 
 contract Paymaster is IPaymaster {
     function validatePaymasterUserOp(UserOperation calldata, bytes32, uint256)
