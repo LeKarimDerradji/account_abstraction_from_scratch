@@ -7,28 +7,28 @@ const EP_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
 
 async function main() {
   try {
-    const entryPoint = await hre.ethers.getContractAt(
-      "EntryPoint",
-      EP_ADDRESS
-    );
+    const entryPoint = await hre.ethers.getContractAt("EntryPoint", EP_ADDRESS);
     const epDepAddress = await entryPoint.getAddress();
     console.log("EntryPoint Contract:", epDepAddress);
 
     const sender = hre.ethers.getCreateAddress({
-        from: FACTORY_ADDRESS, 
-        nonce: FACTORY_NONCE, 
-    })
+      from: FACTORY_ADDRESS,
+      nonce: FACTORY_NONCE,
+    });
 
-    const AccountFactory = await hre.ethers.getContractFactory("AccountFactory");
-    const Account = await hre.ethers.getContractFactory("Account")
+    const AccountFactory = await hre.ethers.getContractFactory(
+      "AccountFactory"
+    );
+    const Account = await hre.ethers.getContractFactory("Account");
 
     const [signer0] = await hre.ethers.getSigners();
     const address0 = await signer0.getAddress();
-    console.log(address0)
+    console.log(address0);
 
-   
     // Ensure proper encoding of the function data
-    const createAccountFunctionData = AccountFactory.interface.encodeFunctionData("createAccount", [address0]).slice(2);
+    const createAccountFunctionData = AccountFactory.interface
+      .encodeFunctionData("createAccount", [address0])
+      .slice(2);
     const executeFunctionData = Account.interface.encodeFunctionData("execute");
 
     //const initCode = FACTORY_ADDRESS + createAccountFunctionData;
@@ -37,7 +37,7 @@ async function main() {
 
     // await entryPoint.depositTo(sender, {value: hre.ethers.parseUnits("100")});
 
-    console.log(createAccountFunctionData)
+    console.log(createAccountFunctionData);
 
     const userOp = {
       sender,
@@ -49,7 +49,7 @@ async function main() {
       preVerificationGas: 50_000,
       maxFeePerGas: hre.ethers.parseUnits("10", "gwei"),
       maxPriorityFeePerGas: hre.ethers.parseUnits("5", "gwei"),
-      paymasterAndData: "0x",
+      paymasterAndData: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       signature: "0x",
     };
 
