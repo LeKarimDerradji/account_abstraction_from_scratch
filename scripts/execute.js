@@ -2,8 +2,8 @@ const { EntryPoint__factory } = require("@account-abstraction/contracts");
 const hre = require("hardhat");
 
 const FACTORY_NONCE = 1;
-const FACTORY_ADDRESS = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
-const EP_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+const FACTORY_ADDRESS = "0x5fbdb2315678afecb367f032d93f642f64180aa3";
+const EP_ADDRESS = "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512";
 
 async function main() {
   try {
@@ -34,8 +34,9 @@ async function main() {
     //const initCode = FACTORY_ADDRESS + createAccountFunctionData;
 
     console.log(sender);
+    
 
-    await entryPoint.depositTo(paymasterAddr, { value: hre.ethers.parseUnits("100")});
+    await entryPoint.depositTo("0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0", { value: hre.ethers.parseUnits("100")});
 
     console.log(createAccountFunctionData);
 
