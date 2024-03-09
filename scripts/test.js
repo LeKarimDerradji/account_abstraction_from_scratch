@@ -6,10 +6,11 @@
 // global scope, and execute the script.
 const hre = require("hardhat");
 const ACCOUNT_ADDRESS = "0x856e4424f806D16E8CBC702B3c0F2ede5468eae5";
+const EP_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+const AF_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const PM_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+
 async function main() {
-  const EP_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-  const AF_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-  const PM_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
   const EP_CODE = await hre.ethers.provider.getCode(EP_ADDRESS);
   const AF_CODE = await hre.ethers.provider.getCode(AF_ADDRESS);
   const PM_CODE = await hre.ethers.provider.getCode(PM_ADDRESS);
@@ -21,7 +22,6 @@ async function main() {
   //console.log(`EntryPoint code : ${EP_CODE}`);
   //console.log(`AccountFactory code : ${AF_CODE}`);
   console.log(`Paymaster code : ${PM_CODE}`);
-
 }
 
 // We recommend this pattern to be able to use async/await everywhere
