@@ -45,7 +45,7 @@ async function main() {
     const userOp = {
       sender,
       nonce: await entryPoint.getNonce(FACTORY_ADDRESS, 2),
-      initCode: "0x",
+      initCode: initCode,
       callData: executeFunctionData, // No need for callData as we're using 'createAccount'
       callGasLimit: 200_000,
       verificationGasLimit: 200_000,
