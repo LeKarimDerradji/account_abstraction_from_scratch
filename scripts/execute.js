@@ -32,7 +32,7 @@ async function main() {
       .slice(2);
     const executeFunctionData = Account.interface.encodeFunctionData("execute");
 
-    //const initCode = FACTORY_ADDRESS + createAccountFunctionData;
+    const initCode = FACTORY_ADDRESS + createAccountFunctionData;
 
     console.log(sender);
 
@@ -52,7 +52,7 @@ async function main() {
       preVerificationGas: 50_000,
       maxFeePerGas: hre.ethers.parseUnits("10", "gwei"),
       maxPriorityFeePerGas: hre.ethers.parseUnits("5", "gwei"),
-      paymasterAndData: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      paymasterAndData: PM_ADDRESS,
       signature: "0x",
     };
 
